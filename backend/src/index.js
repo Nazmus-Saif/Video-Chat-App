@@ -23,13 +23,12 @@ const server = http.createServer(app);
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "https://video-chat-app-frontend-pied.vercel.app", // Replace with your frontend URL
+    origin: "https://video-chat-app-frontend-pied.vercel.app", // Allow your frontend URL
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
-    credentials: true, // Allow credentials (cookies) to be sent with requests
+    credentials: true, // Allow cookies and credentials
   },
-  pingInterval: 25000, // Interval for pinging clients (25 seconds)
-  pingTimeout: 5000,   // Timeout for waiting for a pong from client (5 seconds)
+  transports: ['websocket', 'polling'], // Ensure both transports are available
 });
 
 // Maps to store socket-email relationships

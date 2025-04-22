@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "index.js"
+    }
+  ],
+  "env": {
+    "FRONTEND_URL": "https://nazmussaif.vercel.app",
+    "EMAIL": "md.nazmussaif50@gmail.com",
+    "PASSWORD": "ymlz iexa wqgq dssg",
+    "LOG_LEVEL": "info",
+    "MONGODB_URI": "mongodb+srv://saif:saif@cluster-1.d4gyw.mongodb.net/portfolio?retryWrites=true&w=majority&appName=Cluster-1"
+  }
+}

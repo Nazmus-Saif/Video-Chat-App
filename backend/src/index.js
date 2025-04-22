@@ -2,15 +2,24 @@ import express from "express";
 import bodyParser from "body-parser";
 import { Server } from "socket.io";
 
-const io = new Server({
+const app = express();
+
+// Explicit CORS setup for HTTP requests
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://video-chat-app-frontend-pied.vercel.app"); // Replace with your frontend URL
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
+const io = new Server(app, {
   cors: {
-    origin: "https://video-chat-app-frontend-pied.vercel.app", // Replace this with your actual frontend URL
+    origin: "https://video-chat-app-frontend-pied.vercel.app", // Ensure this is the correct frontend URL
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true, // Allow credentials (if needed)
   },
 });
-const app = express();
 
 app.use(bodyParser.json());
 
@@ -19,6 +28,7 @@ const socketToEmailMapping = new Map();
 
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
+
   socket.on("join-room", (data) => {
     console.log("User", data.emailId, "Joined Room", data.roomId);
     const { roomId, emailId } = data;
@@ -43,7 +53,10 @@ io.on("connection", (socket) => {
   });
 });
 
+// Start the express server on port 8000
 app.listen(8000, () => {
   console.log("Server is running on port 8000");
 });
+
+// Listen to socket.io on port 8001
 io.listen(8001);

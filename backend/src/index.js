@@ -3,7 +3,12 @@ import bodyParser from "body-parser";
 import { Server } from "socket.io";
 
 const io = new Server({
-  cors: true,
+  cors: {
+    origin: "https://video-chat-app-frontend.vercel.app", // Replace this with your actual frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true, // Allow credentials (if needed)
+  },
 });
 const app = express();
 

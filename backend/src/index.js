@@ -1,30 +1,38 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { Server } from "socket.io";
+import cors from "cors"; // Import cors
 
 const app = express();
 
 // Explicit CORS setup for HTTP requests
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://video-chat-app-frontend-pied.vercel.app"); // Replace with your frontend URL
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
+app.use(cors({
+  origin: "https://video-chat-app-frontend-pied.vercel.app", // Replace with your frontend URL
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true, // Allow credentials (cookies, headers)
+}));
 
-const io = new Server(app, {
-  cors: {
-    origin: "https://video-chat-app-frontend-pied.vercel.app", // Ensure this is the correct frontend URL
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true, // Allow credentials (if needed)
-  },
-});
-
+// Body parser middleware
 app.use(bodyParser.json());
 
 const emailToSocketMapping = new Map();
 const socketToEmailMapping = new Map();
+
+// Create HTTP server and socket.io instance
+const server = app.listen(8000, () => {
+  console.log("Server is running on port 8000");
+});
+
+// Create the Socket.IO server, use the existing HTTP server
+const io = new Server(server, {
+  cors: {
+    origin: "https://video-chat-app-frontend-pied.vercel.app", // Ensure this is the correct frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true, // Allow credentials (cookies, headers)
+  },
+});
 
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
@@ -52,11 +60,3 @@ io.on("connection", (socket) => {
     socket.to(socketId).emit("call-accepted", { ans });
   });
 });
-
-// Start the express server on port 8000
-app.listen(8000, () => {
-  console.log("Server is running on port 8000");
-});
-
-// Listen to socket.io on port 8001
-io.listen(8001);

@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 
 const io = new Server({
   cors: {
-    origin: "https://video-chat-app-frontend.vercel.app", // Replace this with your actual frontend URL
+    origin: "https://video-chat-app-frontend-pied.vercel.app", // Replace this with your actual frontend URL
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true, // Allow credentials (if needed)

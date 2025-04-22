@@ -1,11 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { Server } from "socket.io";
+import serverless from "serverless-http";
 
-const io = new Server({
-  cors: true,
-});
 const app = express();
+const io = new Server({
+  cors: {
+    origin: "https://video-chat-app-frontend.vercel.app",
+  },
+});
 
 app.use(bodyParser.json());
 
@@ -14,6 +17,7 @@ const socketToEmailMapping = new Map();
 
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
+
   socket.on("join-room", (data) => {
     console.log("User", data.emailId, "Joined Room", data.roomId);
     const { roomId, emailId } = data;
@@ -38,7 +42,5 @@ io.on("connection", (socket) => {
   });
 });
 
-app.listen(8000, () => {
-  console.log("Server is running on port 8000");
-});
-io.listen(8001);
+// Wrapping the express app for serverless function
+module.exports.handler = serverless(app);
